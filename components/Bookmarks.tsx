@@ -2,16 +2,15 @@ import React from "react";
 import {BookmarksResponse} from "../services/models";
 import Bookmark from "./Bookmark";
 import Pagination from "./Pagination";
-import SearchForm from "./SearchForm";
 
 interface BookmarksProps {
     bookmarks: BookmarksResponse
+    query?: string
 }
 
-const Bookmarks: React.FC<BookmarksProps> = ({bookmarks}) => (
+const Bookmarks: React.FC<BookmarksProps> = ({bookmarks, query}) => (
     <div>
-        <SearchForm/>
-        <Pagination bookmarks={bookmarks}/>
+        <Pagination bookmarks={bookmarks} query={query}/>
         {bookmarks.data.map(bookmark => <Bookmark key={bookmark.id} bookmark={bookmark}/>)}
     </div>
 );
