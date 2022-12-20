@@ -1,0 +1,42 @@
+name: Type Script workflow
+
+
+on:
+  push:
+    branches: [ "**" ]
+
+
+permissions:
+  contents: read
+
+jobs:
+  build-bookmarker-ui:
+    name: Build bookmarker-ui
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: .
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+    
+      - name: Setup Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+          cache-dependency-path: next-sandbox/yarn.lock
+      
+      - name: Install dependencies
+        run: yarn
+        
+      - name: Build
+        run: yarn build
+        
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        name: Build and Publish Docker Image
+        run: |
+          docker build -t ${{ secret.DOCKER_USERNAME }}/bookmarker-ui .
+          docker login -u ${{ secret.DOCKER_USERNAME }} -p ${{ secret.DOCKER_PASSWORD }}
+          docker push ${{ secret.DOCKER_USERNAME }}/bookmarker-ui
+    
